@@ -8,14 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var decks: [Deck] = SampleData.decks
+    @State private var selectedDeckID: UUID? = nil
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationSplitView {
+            DeckListView(decks: $decks, selectedDeckID: $selectedDeckID)
+        } detail: {
+            if let selectedDeckID,
+               let index = decks.firstIndex(where: { $0.id == selectedDeckID }) {
+                StudyView(deck: $decks[index])
+            } else {
+                ContentUnavailableView(
+                    "Select a Deck",
+                    systemImage: "rectangle.stack.fill",
+                    description: Text("Choose a flash card deck to begin studying.")
+                )
+            }
         }
-        .padding()
     }
 }
 
